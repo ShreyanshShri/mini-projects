@@ -6,6 +6,7 @@ var myShakeEvent = new Shake({
 myShakeEvent.start();
 
 let count =0;
+#hacktober special script ☠️
 
 window.addEventListener('shake', shakeEventDidOccur, false);
 
@@ -20,7 +21,8 @@ function shakeEventDidOccur () {
 
 setInterval(function(){
   var time = new Date()
+   t=0
   if(time.getHours == 24 && time.getMinutes <= 10){
-    count = 0;
+    count = t;
   }
 }, 60000);
