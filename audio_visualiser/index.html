@@ -1,0 +1,76 @@
+<!-- 
+           Notes on this code:
+      
+• Uses the mathematical formula for Maurer Rose patterns but is influenced by the bass and treble of the music.
+
+• While the morphing patterns may not precisely sync with the beat initially, the design evolves to better match the rhythm as it progresses.
+
+• Musical preferences vary; if the current song isn't to your liking, feel free to mute and still enjoy the changing patterns.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Based Animation</title>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/p5.min.js" integrity="sha512-pgK6Wo8doipc/IPQ0ilH3b47ww01345nR9ud1/6Qp0n+lQlEW9zuw6JhysRcUpBY4yKuVZjn1MAkDxbnncuGsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/addons/p5.sound.min.js" integrity="sha512-WzkwpdWEMAY/W8WvP9KS2/VI6zkgejR4/KTxTl4qHx0utqeyVE0JY+S1DlMuxDChC7x0oXtk/ESji6a0lP/Tdg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let song;
+        let fft;
+        let peakDetect;
+        let n = 0;
+
+        function preload() {
+            song = loadSound('https://ia903205.us.archive.org/24/items/JimYosefFireflyNCSRelease/Jim%20Yosef%20-%20Firefly%20%5BNCS%20Release%5D.mp3');
+        }
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight, WEBGL);
+            song.loop();
+            fft = new p5.FFT();
+            peakDetect = new p5.PeakDetect();
+        }
+
+        function drawPattern(bass, treble) {
+            noFill();
+            stroke(139, 0, 0);  
+            strokeWeight(5); 
+            beginShape();
+            for (let i = 0; i < 150; i++) {
+                let k = i * n;
+                let r = 300 * sin(n * k);
+                let x = r * cos(k + bass * 0.1);
+                let y = r * sin(k + treble * 0.1);
+                vertex(x, y, 0);
+            }
+            endShape(CLOSE);
+            n += 0.0002;
+        }
+
+        function draw() {
+            background(10);
+            const bass = fft.getEnergy("bass");
+            const treble = fft.getEnergy("treble");
+            const mids = fft.getEnergy("mid");
+            push();
+            translate(0, 0, -400);
+            drawPattern(bass, treble);
+            pop();
+            const speedMultiplier = map(bass, 0, 255, 0.005, 0.03);
+            rotateX(frameCount * speedMultiplier);
+            rotateY(frameCount * speedMultiplier);
+        }
+    </script>
+</body>
+</html>
